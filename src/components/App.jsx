@@ -1,29 +1,20 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 
-const initialState = {
-  filter: '',
+const App = () => {
+  const [filter, setFilter] = useState('');
+
+  const onSubmit = filter => {
+    setFilter(filter);
+  };
+
+  return (
+    <>
+      <Searchbar onSubmit={onSubmit} />
+      {filter && filter.length > 0 && <ImageGallery filter={filter} />}
+    </>
+  );
 };
-
-class App extends Component {
-  state = {
-    ...initialState,
-  };
-
-  onSubmit = filter => {
-    this.setState(() => ({ ...initialState, filter }));
-  };
-
-  render() {
-    const { filter } = this.state;
-    return (
-      <>
-        <Searchbar onSubmit={this.onSubmit} />
-        {filter && filter.length > 0 && <ImageGallery filter={filter} />}
-      </>
-    );
-  }
-}
 
 export default App;

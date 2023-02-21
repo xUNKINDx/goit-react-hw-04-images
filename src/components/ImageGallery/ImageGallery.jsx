@@ -1,86 +1,65 @@
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { getImages } from 'pixabayApi';
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import Button from 'components/Button/Button';
 import Loader from 'components/Loader/Loader';
 
-const initialState = {
-  images: [],
-  page: 1,
-  totalHits: 0,
-  isLoading: false,
-};
+const ImageGallery = props => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [totalHits, setTotalHits] = useState(1);
 
-class ImageGallery extends Component {
-  state = {
-    ...initialState,
-  };
+  const [images, setImages] = useState([]);
 
-  async componentDidMount() {
-    this.loadImages(true);
-  }
+  useEffect(() => {
+    setImages([]);
+    setPage(0);
+  }, [props.filter]);
 
-  async componentDidUpdate(prevProps, prevState) {
-    if (prevProps.filter !== this.props.filter) {
-      this.setState(
-        prevState => ({ ...initialState }),
-        callback => this.loadImages(true)
-      );
-    } else if (prevState.page !== this.state.page) {
-      this.loadImages(false);
+  useEffect(() => {
+    if (page === 0) {
+      setPage(1);
+      return;
     }
-  }
+    loadImages(false);
+  }, [page]);
 
-  loadNextPage = async () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
+  const loadNextPage = async () => {
+    setPage(page + 1);
   };
 
-  loadImages = async newSearch => {
-    const { filter } = this.props;
-    const { page } = this.state;
+  const loadImages = async () => {
+    const { filter } = props;
+    setIsLoading(true);
 
-    this.setState(prevState => ({ isLoading: true }));
     try {
       const response = await getImages(filter, page);
 
-      if (newSearch) {
-        this.setState(prevState => ({
-          images: response.images,
-          totalHits: response.totalHits,
-        }));
-      } else {
-        this.setState(prevState => ({
-          images: [...prevState.images, ...response.images],
-          totalHits: response.totalHits,
-        }));
-      }
+      setImages([...images, ...response.images]);
+      setTotalHits(response.totalHits);
     } catch (error) {
       console.log(error);
     } finally {
-      this.setState(prevState => ({ isLoading: false }));
+      setIsLoading(false);
     }
   };
 
-  render() {
-    const { images, totalHits, page, isLoading } = this.state;
+  return (
+    <>
+      <ul className="imageGallery">
+        {images.length > 0 && <ImageGalleryItem images={images} />}
+      </ul>
 
-    return (
-      <>
-        <ul className="imageGallery">
-          {images.length > 0 && <ImageGalleryItem images={images} />}
-        </ul>
-
-        {isLoading ? (
-          <Loader />
-        ) : (
-          images.length > 0 &&
-          totalHits / 12 > page && <Button onClick={this.loadNextPage} />
-        )}
-      </>
-    );
-  }
-}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        images.length > 0 &&
+        totalHits / 12 > page && <Button onClick={loadNextPage} />
+      )}
+    </>
+  );
+};
 
 ImageGallery.propTypes = {
   filter: PropTypes.string.isRequired,
