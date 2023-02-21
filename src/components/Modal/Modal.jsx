@@ -26,6 +26,7 @@ const Modal = props => {
       document.body.style.position = '';
       document.body.style.top = '';
     };
+    // eslint-disable-next-line
   }, []);
 
   const { imageURL, tags } = props;

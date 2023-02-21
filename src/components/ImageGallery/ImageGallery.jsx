@@ -7,7 +7,7 @@ import Loader from 'components/Loader/Loader';
 
 const ImageGallery = props => {
   const [isLoading, setIsLoading] = useState(false);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [totalHits, setTotalHits] = useState(1);
 
   const [images, setImages] = useState([]);
@@ -23,6 +23,7 @@ const ImageGallery = props => {
       return;
     }
     loadImages(false);
+    // eslint-disable-next-line
   }, [page]);
 
   const loadNextPage = async () => {
