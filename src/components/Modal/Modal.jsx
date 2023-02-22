@@ -1,20 +1,19 @@
 import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-const Modal = props => {
+const Modal = ({ imageURL, tags, onModalClose }) => {
   const onOverlayClick = event => {
-    const { onModalClose } = props;
     onModalClose();
   };
 
-  const onKeydown = event => {
-    if (event.key === 'Escape') {
-      const { onModalClose } = props;
-      onModalClose();
-    }
-  };
+  
 
   useEffect(() => {
+    const onKeydown = event => {
+      if (event.key === 'Escape') {
+        onModalClose();
+      }
+    };
     document.addEventListener('keydown', onKeydown);
     // document.body.classList.add('no-scroll');
     document.body.style.position = 'fixed';
@@ -26,10 +25,8 @@ const Modal = props => {
       document.body.style.position = '';
       document.body.style.top = '';
     };
-    // eslint-disable-next-line
-  }, []);
-
-  const { imageURL, tags } = props;
+    
+  }, [onModalClose]);
 
   return (
     <>
