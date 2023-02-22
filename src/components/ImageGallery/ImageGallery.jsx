@@ -5,7 +5,7 @@ import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import Button from 'components/Button/Button';
 import Loader from 'components/Loader/Loader';
 
-const ImageGallery = props => {
+const ImageGallery = ({filter}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalHits, setTotalHits] = useState(1);
@@ -15,7 +15,7 @@ const ImageGallery = props => {
   useEffect(() => {
     setImages([]);
     setPage(0);
-  }, [props.filter]);
+  }, [filter]);
 
   useEffect(() => {
     if (page === 0) {
@@ -31,7 +31,6 @@ const ImageGallery = props => {
   };
 
   const loadImages = async () => {
-    const { filter } = props;
     setIsLoading(true);
 
     try {
